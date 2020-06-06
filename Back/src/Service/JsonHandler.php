@@ -7,21 +7,23 @@ class JsonHandler
     public static function clearInput(array $deserializedArray) : array
     {
         $cleanArray = [];
-        foreach($deserializedArray as $key => $input){
-            if($key !== "techs"){
-                $input = trim($input);
-                $input = htmlspecialchars($input);
+        foreach($deserializedArray as $inputName => $inputValue){
+            if (gettype($inputValue) !== 'array'){
+                $inputValue = trim($inputValue);
+                $inputValue = htmlspecialchars($inputValue);
+                $cleanArray[$inputName] = $inputValue;
+            } else {
+                $inputValue = self::clearInput($inputValue);
+                $cleanArray[$inputName] = $inputValue;
             }
-            
-            $cleanArray[$key] = $input;
-        }   
+        }
 
         return $cleanArray;
     }
 
     public static function responseHandler(bool $success, string $message) : array
     {
-        $response = 
+        $response =
         [
             "success" => $success,
             "message" => $message,
@@ -38,5 +40,5 @@ class JsonHandler
 
         return $requestContent;
     }
-    
+
 }
